@@ -12,8 +12,8 @@ CREATE TABLE NHAN_VIEN(
 	HoTen				NVARCHAR(100) NOT NULL,
 	GioiTinh			NVARCHAR(10) NOT NULL,
 	NgaySinh			DATE,
-	DienThoai			NVARCHAR(10) NOT NULL,
-	Email				NVARCHAR(100),
+	DienThoai			CHAR(10) NOT NULL,
+	Email				VARCHAR(100),
 	DiaChi				NVARCHAR(200) NOT NULL,
 	NgayVaoLam			DATE DEFAULT CONVERT(DATE, GETDATE()),
     GhiChu				NVARCHAR(200),
@@ -29,8 +29,8 @@ CREATE TABLE NHA_CUNG_CAP(
 	IDNhaCungCap		INT IDENTITY(1,1),
 	TenNhaCungCap		NVARCHAR(100) NOT NULL,
 	DiaChi				NVARCHAR(200) NOT NULL,
-	DienThoai			NVARCHAR(10) NOT NULL,
-	Email				NVARCHAR(100),
+	DienThoai			CHAR(10) NOT NULL,
+	Email				VARCHAR(100),
     GhiChu				NVARCHAR(200),
 
     CONSTRAINT PK_NHA_CUNG_CAP PRIMARY KEY (IDNhaCungCap),
@@ -44,9 +44,7 @@ CREATE TABLE KHACH_HANG(
 	HoTen				NVARCHAR(100) NOT NULL,
 	GioiTinh			NVARCHAR(10) NOT NULL,
 	NgaySinh			DATE,
-	DienThoai			NVARCHAR(10) NOT NULL,
-	Email				NVARCHAR(100),
-	DiaChi				NVARCHAR(200),
+	DienThoai			CHAR(10) NOT NULL,
     GhiChu				NVARCHAR(200),
 
     CONSTRAINT PK_KHACH_HANG PRIMARY KEY (IDKhachHang),
@@ -88,8 +86,7 @@ GO
 CREATE TABLE LO_HANG(
 	IDLoHang			INT IDENTITY(1,1),
 	IDThuoc				INT NOT NULL,
-	TenThuoc			NVARCHAR(200) NOT NULL,
-	SoLoNCC				NVARCHAR(50) NOT NULL,
+	SoLoNCC				VARCHAR(50) NOT NULL,
 	NgaySanXuat			DATE NOT NULL,
 	NgayHetHan			DATE NOT NULL,
 	NgayNhap			DATE NOT NULL DEFAULT CONVERT(DATE,GETDATE()),
@@ -133,7 +130,6 @@ GO
 CREATE TABLE CHI_TIET_HOA_DON(
 	IDHoaDon			INT NOT NULL,
 	IDThuoc				INT NOT NULL,
-	TenThuoc			NVARCHAR(200) NOT NULL,
 	SoLuong				INT NOT NULL,
 	DonGia				INT NOT NULL,
 	ThanhTien			AS (SoLuong * DonGia) PERSISTED,
@@ -147,3 +143,30 @@ CREATE TABLE CHI_TIET_HOA_DON(
 GO
 
 -- 3. NHAP DU LIEU
+INSERT INTO NHAN_VIEN(IDNhanVien, HoTen, GioiTinh, NgaySinh, DienThoai, Email, DiaChi, NgayVaoLam, GhiChu) VALUES
+	(1, N'Nguyễn Văn Minh', N'Nam', '1995-04-15', '0912345678', 'minh.nguyen@gmail.com', N'123 Nguyễn Trãi, Phường Thanh Xuân, Hà Nội', '2024-01-05', NULL),
+	(2, N'Trần Thị Hồng', N'Nữ', '1996-07-10', '0987654321', 'hong.tran@gmail.com', N'45 Lý Thường Kiệt, Phường Cát Linh, Hà Nội', '2024-03-12', NULL),
+	(3, N'Lê Quốc Khánh', N'Nam', '2000-11-23', '0905123456', 'khanh.le@gmail.com', N'22 Hai Bà Trưng, Phường Hoàn Kiếm, Hà Nội', '2024-06-01', NULL),
+	(4, N'Phạm Thu Trang', N'Nữ', '1995-02-08', '0978888999', 'trang.pham@gmail.com', N'16 Phan Đình Phùng, Phường Đống Đa, Hà Nội', '2025-07-14', NULL),
+	(5, N'Hoàng Anh Tuấn', N'Nam', '2001-09-17', '0912456789', 'tuan.hoang@gmail.com', N'89 Cầu Giấy, Phường Dịch Vọng, Hà Nội', '2026-01-01', NULL);
+
+INSERT INTO NHA_CUNG_CAP(IDNhaCungCap, TenNhaCungCap, DiaChi, DienThoai, Email, GhiChu) VALUES
+	();
+
+INSERT INTO KHACH_HANG(IDKhachHang, HoTen, GioiTinh, NgaySinh, DienThoai, GhiChu) VALUES
+	();
+
+INSERT INTO NHOM_THUOC(IDNhomThuoc, TenNhom, MoTa, GhiChu) VALUES
+	();
+
+INSERT INTO THUOC(IDThuoc, TenThuoc, TenHoatChat, HamLuong, DangBaoChe, DonViTinh, NhaSanXuat, NuocSanXuat, GhiChu) VALUES
+	();
+
+INSERT INTO LO_HANG(IDLoHang, IDThuoc, SoLoNCC, NgaySanXuat, NgayHetHan, NgayNhap, SoLuongNhap, DonViTinh, DonGiaNhap, DonGiaBan, IDNvNhap, IDNhaCungCap, SoLuongTon, GhiChu) VALUES
+	();
+
+INSERT INTO HOA_DON(IDHoaDon, IDKhachHang, IDNhanVien, NgayLap, TongTien, HinhThucThanhToan, GhiChu) VALUES
+	();
+
+INSERT INTO CHI_TIET_HOA_DON(IDHoaDon, IDThuoc, SoLuong, DonGia, GhiChu) VALUES
+	();
