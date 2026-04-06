@@ -597,3 +597,341 @@ INSERT INTO CHI_TIET_HOA_DON(IDHoaDon, IDThuoc, IDLoHang, SoLuong, DonGia, GhiCh
 	('HD000050', 'TH0035', 'LO000030', 1, 87400, NULL), 
 	('HD000050', 'TH0049', 'LO000020', 1, 157500, NULL);
 GO
+
+-- TRIGGER TÍNH TỔNG TIỀN
+CREATE TRIGGER TRG_TongTienHoaDon
+ON CHI_TIET_HOA_DON
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Lấy danh sách hóa đơn bị ảnh hưởng
+    ;WITH HoaDonAnhHuong AS
+    (
+        SELECT IDHoaDon FROM inserted
+        UNION
+        SELECT IDHoaDon FROM deleted
+    ),
+    TongTienMoi AS
+    (
+        SELECT 
+            ct.IDHoaDon,
+            SUM(ct.ThanhTien) AS TongTien
+        FROM CHI_TIET_HOA_DON ct
+        INNER JOIN HoaDonBiAnhHuong hd
+            ON ct.IDHoaDon = hd.IDHoaDon
+        GROUP BY ct.IDHoaDon
+    )
+    UPDATE hd
+    SET hd.TongTien = ISNULL(tt.TongTien, 0)
+    FROM HOA_DON hd
+    INNER JOIN HoaDonBiAnhHuong h
+        ON hd.IDHoaDon = h.IDHoaDon
+    LEFT JOIN TongTienMoi tt
+        ON hd.IDHoaDon = tt.IDHoaDon;
+END;
+GO
+
+-- TRIGGER CẬP NHẬT TỒN KHO
+CREATE TRIGGER TRG_CapNhatTonKho
+ON CHI_TIET_HOA_DON
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @BienDong TABLE
+    (
+        IDLoHang CHAR(8) PRIMARY KEY,
+        SoLuongThayDoi INT
+    );
+
+    INSERT INTO @BienDong (IDLoHang, SoLuongThayDoi)
+    SELECT
+        IDLoHang,
+        SUM(SoLuongThayDoi) AS SoLuongThayDoi
+    FROM
+    (
+        -- INSERT => trừ tồn
+        SELECT
+            i.IDLoHang,
+            -SUM(i.SoLuong) AS SoLuongThayDoi
+        FROM inserted i
+        GROUP BY i.IDLoHang
+
+        UNION ALL
+
+        -- DELETE => cộng lại tồn
+        SELECT
+            d.IDLoHang,
+            SUM(d.SoLuong) AS SoLuongThayDoi
+        FROM deleted d
+        GROUP BY d.IDLoHang
+    ) x
+    GROUP BY IDLoHang;
+
+    -- Kiểm tra tồn kho có đủ không
+    IF EXISTS
+    (
+        SELECT 1
+        FROM LO_HANG lh
+        INNER JOIN @BienDong bd
+            ON lh.IDLoHang = bd.IDLoHang
+        WHERE lh.SoLuongTon + bd.SoLuongThayDoi < 0
+    )
+    BEGIN
+        RAISERROR(N'Số lượng tồn trong lô hàng không đủ để xuất bán.', 16, 1);
+        ROLLBACK TRANSACTION;
+        RETURN;
+    END;
+
+    -- Cập nhật tồn kho
+    UPDATE lh
+    SET lh.SoLuongTon = lh.SoLuongTon + bd.SoLuongThayDoi
+    FROM LO_HANG lh
+    INNER JOIN @BienDong bd
+        ON lh.IDLoHang = bd.IDLoHang;
+END;
+GO
+
+CREATE FUNCTION FN_TheoDoiTonKho_TheoKhoangThoiGian
+(
+    @TuNgay DATE,
+    @DenNgay DATE
+)
+RETURNS TABLE
+AS
+RETURN
+WITH BanTheoLoTruocKy AS
+(
+    SELECT
+        cthd.IDLoHang,
+        SUM(cthd.SoLuong) AS SoLuongBanTruocKy
+    FROM CHI_TIET_HOA_DON cthd
+    INNER JOIN HOA_DON hd
+        ON cthd.IDHoaDon = hd.IDHoaDon
+    WHERE CAST(hd.NgayLap AS DATE) < @TuNgay
+    GROUP BY cthd.IDLoHang
+),
+BanTheoLoDenCuoiKy AS
+(
+    SELECT
+        cthd.IDLoHang,
+        SUM(cthd.SoLuong) AS SoLuongBanDenCuoiKy
+    FROM CHI_TIET_HOA_DON cthd
+    INNER JOIN HOA_DON hd
+        ON cthd.IDHoaDon = hd.IDHoaDon
+    WHERE CAST(hd.NgayLap AS DATE) <= @DenNgay
+    GROUP BY cthd.IDLoHang
+),
+BanTrongKy AS
+(
+    SELECT
+        cthd.IDThuoc,
+        SUM(cthd.SoLuong) AS BanRa
+    FROM CHI_TIET_HOA_DON cthd
+    INNER JOIN HOA_DON hd
+        ON cthd.IDHoaDon = hd.IDHoaDon
+    WHERE CAST(hd.NgayLap AS DATE) >= @TuNgay
+      AND CAST(hd.NgayLap AS DATE) <= @DenNgay
+    GROUP BY cthd.IDThuoc
+),
+TonTheoLo AS
+(
+    SELECT
+        lh.IDLoHang,
+        lh.IDThuoc,
+        lh.DonGiaNhap,
+        lh.NgayNhap,
+        lh.NgayHetHan,
+
+        -- Tồn đầu kỳ của từng lô
+        CASE
+            WHEN lh.NgayNhap < @TuNgay THEN
+                CASE
+                    WHEN lh.SoLuongNhap - ISNULL(bt.SoLuongBanTruocKy, 0) > 0
+                        THEN lh.SoLuongNhap - ISNULL(bt.SoLuongBanTruocKy, 0)
+                    ELSE 0
+                END
+            ELSE 0
+        END AS TonDauKyTheoLo,
+
+        -- Tồn cuối kỳ của từng lô
+        CASE
+            WHEN lh.NgayNhap <= @DenNgay THEN
+                CASE
+                    WHEN lh.SoLuongNhap - ISNULL(bc.SoLuongBanDenCuoiKy, 0) > 0
+                        THEN lh.SoLuongNhap - ISNULL(bc.SoLuongBanDenCuoiKy, 0)
+                    ELSE 0
+                END
+            ELSE 0
+        END AS TonCuoiKyTheoLo
+    FROM LO_HANG lh
+    LEFT JOIN BanTheoLoTruocKy bt
+        ON lh.IDLoHang = bt.IDLoHang
+    LEFT JOIN BanTheoLoDenCuoiKy bc
+        ON lh.IDLoHang = bc.IDLoHang
+),
+TongHopTheoThuoc AS
+(
+    SELECT
+        ttl.IDThuoc,
+
+        -- Tồn đầu kỳ chỉ tính thuốc còn hạn tại đầu kỳ
+        SUM(
+            CASE
+                WHEN ttl.NgayHetHan < @TuNgay THEN 0
+                ELSE ttl.TonDauKyTheoLo
+            END
+        ) AS TonDauKy,
+
+        -- Số lượng thuốc đã hết hạn còn lại đến cuối kỳ
+        SUM(
+            CASE
+                WHEN ttl.NgayHetHan <= @DenNgay THEN ttl.TonCuoiKyTheoLo
+                ELSE 0
+            END
+        ) AS ThuocHetHan,
+
+        -- Tồn kho sử dụng được cuối kỳ = tồn cuối kỳ của các lô chưa hết hạn
+        SUM(
+            CASE
+                WHEN ttl.NgayHetHan > @DenNgay THEN ttl.TonCuoiKyTheoLo
+                ELSE 0
+            END
+        ) AS TonKho,
+
+        -- Giá trị hàng tồn chỉ tính phần còn hạn
+        SUM(
+            CASE
+                WHEN ttl.NgayHetHan > @DenNgay THEN ttl.TonCuoiKyTheoLo * ttl.DonGiaNhap
+                ELSE 0
+            END
+        ) AS GiaTriHangTon
+    FROM TonTheoLo ttl
+    GROUP BY ttl.IDThuoc
+)
+SELECT
+    t.IDThuoc,
+    t.TenThuoc,
+    t.DonViTinh,
+    ISNULL(btk.BanRa, 0) AS BanRa,
+    ISNULL(th.TonDauKy, 0) AS TonDauKy,
+    ISNULL(th.ThuocHetHan, 0) AS ThuocHetHan,
+    ISNULL(th.TonKho, 0) AS TonKho,
+    CAST(ISNULL(th.GiaTriHangTon, 0) AS DECIMAL(18,2)) AS GiaTriHangTon
+FROM THUOC t
+LEFT JOIN BanTrongKy btk
+    ON t.IDThuoc = btk.IDThuoc
+LEFT JOIN TongHopTheoThuoc th
+    ON t.IDThuoc = th.IDThuoc;
+GO
+
+-- VIEW TỒN KHO THEO THỜI GIAN THỰC
+CREATE VIEW VW_TheoDoiTonKho
+AS
+WITH BanTheoLo AS
+(
+    SELECT
+        cthd.IDLoHang,
+        cthd.IDThuoc,
+        SUM(cthd.SoLuong) AS BanRaTheoLo
+    FROM CHI_TIET_HOA_DON cthd
+    INNER JOIN HOA_DON hd
+        ON cthd.IDHoaDon = hd.IDHoaDon
+    GROUP BY cthd.IDLoHang, cthd.IDThuoc
+),
+TonTheoLo AS
+(
+    SELECT
+        lh.IDLoHang,
+        lh.IDThuoc,
+        lh.SoLuongNhap,
+        lh.DonGiaNhap,
+        lh.NgayHetHan,
+        ISNULL(btl.BanRaTheoLo, 0) AS BanRaTheoLo,
+        CASE
+            WHEN lh.SoLuongNhap - ISNULL(btl.BanRaTheoLo, 0) > 0
+                THEN lh.SoLuongNhap - ISNULL(btl.BanRaTheoLo, 0)
+            ELSE 0
+        END AS TonConTheoLo
+    FROM LO_HANG lh
+    LEFT JOIN BanTheoLo btl
+        ON lh.IDLoHang = btl.IDLoHang
+),
+TongHopTheoThuoc AS
+(
+    SELECT
+        ttl.IDThuoc,
+        SUM(ttl.SoLuongNhap) AS SoLuongNhap,
+        SUM(ttl.BanRaTheoLo) AS BanRa,
+        SUM(
+            CASE
+                WHEN ttl.NgayHetHan <= CAST(GETDATE() AS DATE)
+                    THEN ttl.TonConTheoLo
+                ELSE 0
+            END
+        ) AS ThuocHetHan,
+        SUM(
+            CASE
+                WHEN ttl.NgayHetHan > CAST(GETDATE() AS DATE)
+                    THEN ttl.TonConTheoLo
+                ELSE 0
+            END
+        ) AS TonKho,
+        SUM(
+            CASE
+                WHEN ttl.NgayHetHan > CAST(GETDATE() AS DATE)
+                    THEN ttl.TonConTheoLo * ttl.DonGiaNhap
+                ELSE 0
+            END
+        ) AS GiaTriHangTon
+    FROM TonTheoLo ttl
+    GROUP BY ttl.IDThuoc
+)
+SELECT
+    t.IDThuoc,
+    t.TenThuoc,
+    t.DonViTinh,
+    ISNULL(th.SoLuongNhap, 0) AS SoLuongNhap,
+    ISNULL(th.BanRa, 0) AS BanRa,
+    ISNULL(th.ThuocHetHan, 0) AS ThuocHetHan,
+    ISNULL(th.TonKho, 0) AS TonKho,
+    CAST(ISNULL(th.GiaTriHangTon, 0) AS DECIMAL(18,2)) AS GiaTriHangTon
+FROM THUOC t
+LEFT JOIN TongHopTheoThuoc th
+    ON t.IDThuoc = th.IDThuoc;
+GO
+
+-- VIEW CẢNH BÁO THUỐC HẾT HẠN
+CREATE VIEW VW_CanhBaoThuocSapHetHan
+AS
+SELECT
+    lh.IDLoHang,
+    t.TenThuoc,
+    t.DonViTinh,
+    lh.NgayHetHan,
+    lh.SoLuongTon AS SoLuong,
+    lh.DonGiaNhap AS GiaNhap,
+    lh.SoLuongTon * lh.DonGiaNhap AS TongGiaTri,
+    CASE
+        WHEN lh.NgayHetHan < CAST(GETDATE() AS DATE) THEN N'Cần tiêu hủy'
+        WHEN lh.NgayHetHan < DATEADD(MONTH, 1, CAST(GETDATE() AS DATE)) THEN N'Cảnh báo đỏ'
+        WHEN lh.NgayHetHan < DATEADD(MONTH, 3, CAST(GETDATE() AS DATE)) THEN N'Cảnh báo mạnh'
+        WHEN lh.NgayHetHan <= DATEADD(MONTH, 6, CAST(GETDATE() AS DATE)) THEN N'Thuốc cần đẩy bán'
+    END AS TrangThai
+FROM LO_HANG lh
+INNER JOIN THUOC t
+    ON lh.IDThuoc = t.IDThuoc
+WHERE lh.SoLuongTon > 0
+  AND (
+        lh.NgayHetHan < CAST(GETDATE() AS DATE)
+        OR lh.NgayHetHan <= DATEADD(MONTH, 6, CAST(GETDATE() AS DATE))
+      );
+GO
+
+-- VIEW DOANH THU THEO NGÀY
+
+
+-- VIEW DOANH THU THEO THÁNG
