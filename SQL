@@ -227,7 +227,7 @@ INSERT INTO THUOC(IDThuoc, IDNhomThuoc, TenThuoc, TenHoatChat, HamLuong, DangBao
 	('TH0011', 'NH0011', N'Duphalac 15ml', N'Lactulose', N'667g/l', N'Bột', N'Gói', N'Đức'), 
 	('TH0012', 'NH0006', N'Efferalgan 500', N'Paracetamol', N'500mg', N'Viên nén', N'Vỉ', N'Việt Nam'), 
 	('TH0013', 'NH0006', N'Efferalgan Sac 150', N'Paracetamol', N'150mg', N'Bột', N'Gói', N'Việt Nam'), 
-	('TH0014', 'NH0010', N'Enterogermina 2 tỷ', N'Bacillus clausii', N'2 tỷ', N'Dung dịch', N'Vỉ', N'Việt Nam'), 
+	('TH0014', 'NH0010', N'Enterogermina 2 tỷ', N'Bacillus clausii', N'5ml', N'Dung dịch', N'Vỉ', N'Việt Nam'), 
 	('TH0015', 'NH0013', N'Exopan 50mg/ml 30ml', N'Sắt III', N'50mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc'), 
 	('TH0016', 'NH0013', N'Ferlatum 15ml', N'Sắt III', N'40mg/15ml', N'Dung dịch', N'Chai', N'Hàn Quốc'), 
 	('TH0017', 'NH0007', N'Fexihist 60mg/5ml 60ml', N'Fexofenadine', N'12mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc'), 
