@@ -8,57 +8,53 @@ GO
 -- 2. TAO BANG
 -- Bang NHAN VIEN
 CREATE TABLE NHAN_VIEN(
-	IDNhanVien			INT	IDENTITY(1,1),
-	HoTen				NVARCHAR(100) NOT NULL,
-	GioiTinh			NVARCHAR(10) NOT NULL,
-	NgaySinh			DATE,
-	DienThoai			CHAR(10) NOT NULL,
-	Email				VARCHAR(100),
-	DiaChi				NVARCHAR(200) NOT NULL,
-	NgayVaoLam			DATE DEFAULT CONVERT(DATE, GETDATE()),
-    GhiChu				NVARCHAR(200),
+	IDNhanVien			CHAR(6), 
+	HoTen				NVARCHAR(100) NOT NULL, 
+	GioiTinh			NVARCHAR(10) NOT NULL, 
+	NgaySinh			DATE, 
+	DienThoai			CHAR(10) NOT NULL, 
+	Email				VARCHAR(100), 
+	DiaChi				NVARCHAR(200) NOT NULL, 
+	NgayVaoLam			DATE DEFAULT CONVERT(DATE, GETDATE()), 
 
-    CONSTRAINT PK_NHAN_VIEN PRIMARY KEY (IDNhanVien),
-    CONSTRAINT UQ_NV_SDT UNIQUE (DienThoai),
+    CONSTRAINT PK_NHAN_VIEN PRIMARY KEY (IDNhanVien), 
+    CONSTRAINT UQ_NV_SDT UNIQUE (DienThoai), 
 	CONSTRAINT CK_NV_GioiTinh CHECK (GioiTinh IN (N'Nam', N'Nữ'))
 );
 GO
 
 -- Bang NHA CUNG CAP
 CREATE TABLE NHA_CUNG_CAP(
-	IDNhaCungCap		INT IDENTITY(1,1),
-	TenNhaCungCap		NVARCHAR(100) NOT NULL,
-	DiaChi				NVARCHAR(200) NOT NULL,
-	DienThoai			CHAR(10) NOT NULL,
-	Email				VARCHAR(100),
-    GhiChu				NVARCHAR(200),
+	IDNhaCungCap		CHAR(6), 
+	TenNhaCungCap		NVARCHAR(100) NOT NULL, 
+	DiaChi				NVARCHAR(200) NOT NULL, 
+	DienThoai			CHAR(10) NOT NULL, 
+	Email				VARCHAR(100), 
 
-    CONSTRAINT PK_NHA_CUNG_CAP PRIMARY KEY (IDNhaCungCap),
+    CONSTRAINT PK_NHA_CUNG_CAP PRIMARY KEY (IDNhaCungCap), 
 	CONSTRAINT UQ_NCC_SDT UNIQUE (DienThoai)
 );
 GO
 
 -- Bang KHACH HANG
 CREATE TABLE KHACH_HANG(
-	IDKhachHang			INT IDENTITY(1,1),
-	HoTen				NVARCHAR(100) NOT NULL,
-	GioiTinh			NVARCHAR(10) NOT NULL,
-	NgaySinh			DATE,
-	DienThoai			CHAR(10) NOT NULL,
-    GhiChu				NVARCHAR(200),
+	IDKhachHang			CHAR(8), 
+	HoTen				NVARCHAR(100) NOT NULL, 
+	GioiTinh			NVARCHAR(10), 
+	NgaySinh			DATE, 
+	DienThoai			CHAR(10) NOT NULL, 
 
-    CONSTRAINT PK_KHACH_HANG PRIMARY KEY (IDKhachHang),
-	CONSTRAINT UQ_KH_SDT UNIQUE (DienThoai),
+    CONSTRAINT PK_KHACH_HANG PRIMARY KEY (IDKhachHang), 
+	CONSTRAINT UQ_KH_SDT UNIQUE (DienThoai), 
 	CONSTRAINT CK_KH_GioiTinh CHECK (GioiTinh IN (N'Nam', N'Nữ'))
 );
 GO
 
 -- Bang NHOM THUOC
 CREATE TABLE NHOM_THUOC(
-	IDNhomThuoc			INT IDENTITY(1,1),
-	TenNhom				NVARCHAR(100) NOT NULL,
-	MoTa				NVARCHAR(200),
-    GhiChu				NVARCHAR(200),
+	IDNhomThuoc			CHAR(6), 
+	TenNhom				NVARCHAR(100) NOT NULL, 
+	MoTa				NVARCHAR(200), 
 
     CONSTRAINT PK_NHOM_THUOC PRIMARY KEY (IDNhomThuoc)
 );
@@ -66,199 +62,525 @@ GO
 
 -- Bang THUOC
 CREATE TABLE THUOC(
-	IDThuoc				INT IDENTITY(1,1),
-    IDNhomThuoc			INT NOT NULL,
-	TenThuoc			NVARCHAR(100) NOT NULL,
-	TenHoatChat			NVARCHAR(100) NOT NULL,
-	HamLuong			NVARCHAR(50) NOT NULL,
-	DangBaoChe			NVARCHAR(50) NOT NULL,
-	DonViTinh			NVARCHAR(50) NOT NULL,
-    NuocSanXuat			NVARCHAR(50),
-    GhiChu				NVARCHAR(200),
+	IDThuoc				CHAR(6), 
+    IDNhomThuoc			CHAR(6) NOT NULL, 
+	TenThuoc			NVARCHAR(100) NOT NULL, 
+	TenHoatChat			NVARCHAR(100) NOT NULL, 
+	HamLuong			NVARCHAR(50) NOT NULL, 
+	DangBaoChe			NVARCHAR(50) NOT NULL, 
+	DonViTinh			NVARCHAR(50) NOT NULL, 
+    NuocSanXuat			NVARCHAR(50), 
 
-    CONSTRAINT PK_THUOC PRIMARY KEY (IDThuoc),
+    CONSTRAINT PK_THUOC PRIMARY KEY (IDThuoc), 
 	CONSTRAINT FK_THUOC_NHOM FOREIGN KEY (IDNhomThuoc) REFERENCES NHOM_THUOC(IDNhomThuoc)
 );
 GO
 
 -- Bang LO HANG
 CREATE TABLE LO_HANG(
-	IDLoHang			INT IDENTITY(1,1),
-	IDThuoc				INT NOT NULL,
-	SoLoNCC				VARCHAR(50) NOT NULL,
-	NgaySanXuat			DATE NOT NULL,
-	NgayHetHan			DATE NOT NULL,
-	NgayNhap			DATE NOT NULL DEFAULT CONVERT(DATE,GETDATE()),
-	SoLuongNhap			INT NOT NULL,
-	DonViTinh			NVARCHAR(50) NOT NULL,
+	IDLoHang			CHAR(8), 
+	IDThuoc				CHAR(6) NOT NULL, 
+	SoLoNCC				CHAR(11) NOT NULL, 
+	NgaySanXuat			DATE NOT NULL, 
+	NgayHetHan			DATE NOT NULL, 
+	NgayNhap			DATE NOT NULL DEFAULT CONVERT(DATE, GETDATE()), 
+	SoLuongNhap			INT NOT NULL, 
+	DonViTinh			NVARCHAR(50) NOT NULL, 
 	DonGiaNhap			INT NOT NULL, 
 	DonGiaBan			INT NOT NULL, 
-	IDNvNhap			INT NOT NULL,
-	IDNhaCungCap		INT NOT NULL,
-	SoLuongTon			INT NOT NULL,
-    GhiChu				NVARCHAR(200),
+	IDNvNhap			CHAR(6) NOT NULL, 
+	IDNhaCungCap		CHAR(6), 
+	SoLuongTon			INT NOT NULL, 
+    GhiChu				NVARCHAR(200), 
 
-    CONSTRAINT PK_LO_HANG PRIMARY KEY (IDLoHang),
-	CONSTRAINT FK_LO_THUOC FOREIGN KEY (IDThuoc) REFERENCES THUOC(IDThuoc),
-	CONSTRAINT FK_LO_NV FOREIGN KEY (IDNvNhap) REFERENCES NHAN_VIEN(IDNhanVien),
-	CONSTRAINT FK_LO_NCC FOREIGN KEY (IDNhaCungCap) REFERENCES NHA_CUNG_CAP(IDNhaCungCap),
-	CONSTRAINT CK_LO_Ngay CHECK (NgayHetHan > NgayNhap AND NgayNhap > NgaySanXuat),
-	CONSTRAINT CK_LO_SoLuong CHECK (SoLuongNhap > 0 AND SoLuongTon <= SoLuongNhap),
+    CONSTRAINT PK_LO_HANG PRIMARY KEY (IDLoHang), 
+	CONSTRAINT FK_LO_THUOC FOREIGN KEY (IDThuoc) REFERENCES THUOC(IDThuoc), 
+	CONSTRAINT FK_LO_NV FOREIGN KEY (IDNvNhap) REFERENCES NHAN_VIEN(IDNhanVien), 
+	CONSTRAINT FK_LO_NCC FOREIGN KEY (IDNhaCungCap) REFERENCES NHA_CUNG_CAP(IDNhaCungCap), 
+	CONSTRAINT CK_LO_Ngay CHECK (NgayHetHan > NgayNhap AND NgayNhap > NgaySanXuat), 
+	CONSTRAINT CK_LO_SoLuong CHECK (SoLuongNhap > 0 AND SoLuongTon <= SoLuongNhap), 
 	CONSTRAINT CK_LO_Gia CHECK (DonGiaNhap > 0 AND DonGiaBan > 0)
 );
 GO
 
 -- Bang HOA DON
 CREATE TABLE HOA_DON(
-	IDHoaDon			INT IDENTITY(1,1),
-	IDKhachHang			INT NOT NULL,
-	IDNhanVien			INT NOT NULL,
-	NgayLap				DATETIME NOT NULL DEFAULT GETDATE(),
-	TongTien			INT NOT NULL,
-	HinhThucThanhToan	NVARCHAR(50) NOT NULL,
-    GhiChu				NVARCHAR(200),
+	IDHoaDon			CHAR(8), 
+	IDKhachHang			CHAR(8) NOT NULL, 
+	IDNhanVien			CHAR(6) NOT NULL, 
+	NgayLap				DATETIME NOT NULL DEFAULT GETDATE(), 
+	TongTien			INT NOT NULL, 
+	HinhThucThanhToan	NVARCHAR(50) NOT NULL, 
+    GhiChu				NVARCHAR(200), 
 
-    CONSTRAINT PK_HOA_DON PRIMARY KEY (IDHoaDon),
-	CONSTRAINT FK_HD_KH FOREIGN KEY (IDKhachHang) REFERENCES KHACH_HANG(IDKhachHang),
-	CONSTRAINT FK_HD_NV FOREIGN KEY (IDNhanVien) REFERENCES NHAN_VIEN(IDNhanVien),
-	CONSTRAINT CK_HD_Httt CHECK (HinhThucThanhToan IN (N'Tiền mặt', N'Chuyển khoản')),
+    CONSTRAINT PK_HOA_DON PRIMARY KEY (IDHoaDon), 
+	CONSTRAINT FK_HD_KH FOREIGN KEY (IDKhachHang) REFERENCES KHACH_HANG(IDKhachHang), 
+	CONSTRAINT FK_HD_NV FOREIGN KEY (IDNhanVien) REFERENCES NHAN_VIEN(IDNhanVien), 
+	CONSTRAINT CK_HD_Httt CHECK (HinhThucThanhToan IN (N'Tiền mặt', N'Chuyển khoản')), 
 );
 GO
 
 -- Bang CHI TIET HOA DON
 CREATE TABLE CHI_TIET_HOA_DON(
-	IDHoaDon			INT NOT NULL,
-	IDThuoc				INT NOT NULL,
-	SoLuong				INT NOT NULL,
-	DonGia				INT NOT NULL,
-	ThanhTien			AS (SoLuong * DonGia) PERSISTED,
-    GhiChu				NVARCHAR(200),
+	IDHoaDon			CHAR(8) NOT NULL, 
+	IDThuoc				CHAR(6) NOT NULL, 
+	IDLoHang			CHAR(8) NOT NULL, 
+	SoLuong				INT NOT NULL, 
+	DonGia				INT NOT NULL, 
+	ThanhTien			AS (SoLuong * DonGia) PERSISTED, 
+    GhiChu				NVARCHAR(200), 
 
-    CONSTRAINT PK_CT_HOA_DON PRIMARY KEY (IDHoaDon, IDThuoc),
-	CONSTRAINT FK_CTHD_HD FOREIGN KEY (IDHoaDon) REFERENCES HOA_DON(IDHoaDon),
-    CONSTRAINT FK_CTHD_THUOC FOREIGN KEY (IDThuoc) REFERENCES THUOC(IDThuoc),
+    CONSTRAINT PK_CT_HOA_DON PRIMARY KEY (IDHoaDon, IDLoHang), 
+	CONSTRAINT FK_CTHD_HD FOREIGN KEY (IDHoaDon) REFERENCES HOA_DON(IDHoaDon), 
+    CONSTRAINT FK_CTHD_THUOC FOREIGN KEY (IDThuoc) REFERENCES THUOC(IDThuoc), 
+	CONSTRAINT FK_CTHD_LO FOREIGN KEY (IDLoHang) REFERENCES LO_HANG(IDLoHang), 
 	CONSTRAINT CK_CTHD CHECK (SoLuong > 0 AND DonGia > 0)
 );
 GO
 
 -- 3. NHAP DU LIEU
-INSERT INTO NHAN_VIEN(IDNhanVien, HoTen, GioiTinh, NgaySinh, DienThoai, Email, DiaChi, NgayVaoLam, GhiChu) VALUES
-	(1, N'Nguyễn Văn Minh', N'Nam', '1995-04-15', '0912345678', 'minh.nguyen@gmail.com', N'123 Nguyễn Trãi, Phường Thanh Xuân, Hà Nội', '2024-01-05', NULL),
-	(2, N'Trần Thị Hồng', N'Nữ', '1996-07-10', '0987654321', 'hong.tran@gmail.com', N'45 Lý Thường Kiệt, Phường Cát Linh, Hà Nội', '2024-03-12', NULL),
-	(3, N'Lê Quốc Khánh', N'Nam', '2000-11-23', '0905123456', 'khanh.le@gmail.com', N'22 Hai Bà Trưng, Phường Hoàn Kiếm, Hà Nội', '2024-06-01', NULL),
-	(4, N'Phạm Thu Trang', N'Nữ', '1998-02-08', '0978888999', 'trang.pham@gmail.com', N'16 Phan Đình Phùng, Phường Đống Đa, Hà Nội', '2025-07-14', NULL),
-	(5, N'Hoàng Anh Tuấn', N'Nam', '2001-09-17', '0912456789', 'tuan.hoang@gmail.com', N'89 Cầu Giấy, Phường Dịch Vọng, Hà Nội', '2026-01-01', NULL);
+INSERT INTO NHAN_VIEN(IDNhanVien, HoTen, GioiTinh, NgaySinh, DienThoai, Email, DiaChi, NgayVaoLam) VALUES
+	('NV0001', N'Nguyễn Văn Minh', N'Nam', '1995-04-15', '0912345678', 'minh.nguyen@gmail.com', N'123 Nguyễn Trãi, Phường Thanh Xuân, Hà Nội', '2024-01-05'), 
+	('NV0002', N'Trần Thị Hồng', N'Nữ', '1996-07-10', '0987654321', 'hong.tran@gmail.com', N'45 Lý Thường Kiệt, Phường Cát Linh, Hà Nội', '2024-03-12'), 
+	('NV0003', N'Lê Quốc Khánh', N'Nam', '2000-11-23', '0905123456', 'khanh.le@gmail.com', N'22 Hai Bà Trưng, Phường Hoàn Kiếm, Hà Nội', '2024-06-01'), 
+	('NV0004', N'Phạm Thu Trang', N'Nữ', '1998-02-08', '0978888999', 'trang.pham@gmail.com', N'16 Phan Đình Phùng, Phường Đống Đa, Hà Nội', '2025-07-14'), 
+	('NV0005', N'Hoàng Anh Tuấn', N'Nam', '2001-09-17', '0912456789', 'tuan.hoang@gmail.com', N'89 Cầu Giấy, Phường Dịch Vọng, Hà Nội', '2026-01-01');
 
-INSERT INTO NHA_CUNG_CAP(IDNhaCungCap, TenNhaCungCap, DiaChi, DienThoai, Email, GhiChu) VALUES
-	(1, N'Dược Hậu Giang', N'288 Bis Nguyễn Văn Cừ, Cái Khế, Cần Thơ', '0923891433', NULL, NULL),
-	(2, N'Traphaco', N'75 Yên Ninh, Ba Đình, Hà Nội', '0438430076', NULL, NULL),
-	(3, N'An Khang Pharma', N'128 Trần Quang Khải, Tân Định, Thành phố Hồ Chí Minh', '02838125960', NULL, NULL),
-	(4, N'Dược Vương', N'62 Vũ Trọng Phụng, Thanh Xuân, Hà Nội', '0878929789', NULL, NULL),
-	(5, N'Dược phẩm Thái Minh', N'Ngõ 2 Thọ Tháp, Cầu Giấy, Hà Nội', '02432003300', NULL, NULL);
+INSERT INTO NHA_CUNG_CAP(IDNhaCungCap, TenNhaCungCap, DiaChi, DienThoai, Email) VALUES
+	('NCC001', N'Dược Hậu Giang', N'288 Bis Nguyễn Văn Cừ, Cái Khế, Cần Thơ', '0923891433', NULL), 
+	('NCC002', N'Traphaco', N'75 Yên Ninh, Ba Đình, Hà Nội', '0438430076', NULL), 
+	('NCC003', N'An Khang Pharma', N'128 Trần Quang Khải, Tân Định, Thành phố Hồ Chí Minh', '0838125960', NULL), 
+	('NCC004', N'Dược Vương', N'62 Vũ Trọng Phụng, Thanh Xuân, Hà Nội', '0878929789', NULL), 
+	('NCC005', N'Dược phẩm Thái Minh', N'Ngõ 2 Thọ Tháp, Cầu Giấy, Hà Nội', '0243200330', NULL);
 
-INSERT INTO KHACH_HANG(IDKhachHang, HoTen, GioiTinh, NgaySinh, DienThoai, GhiChu) VALUES
-	(1, N'Nguyễn Văn Minh', N'Nam', '1990-05-12', '0912345678', NULL),
-	(2, N'Trần Thị Hồng', N'Nữ', '1988-03-22', '0934567890', NULL),
-	(3, N'Lê Quốc Anh', N'Nam', '1995-11-03', '0978456321', NULL),
-	(4, N'Phạm Thị Lan', N'Nữ', '1992-07-17', '0987654321', NULL),
-	(5, N'Hoàng Văn Tâm', N'Nam', '1985-02-10', '0901234987', NULL),
-	(6, N'Võ Thị Mai', N'Nữ', '1998-09-08', '0965432187', NULL),
-	(7, N'Khách vãng lai', N'Nam', NULL, '0000000000', NULL),
-	(8, N'Bùi Thị Thu', N'Nữ', '2000-12-14', '0998765432', NULL),
-	(9, N'Ngô Văn Khánh', N'Nam', '1987-06-30', '0954321987', NULL),
-	(10, N'Phan Thị Hạnh', N'Nữ', '1993-10-19', '0923456789', NULL),
-	(11, N'Trịnh Văn Hoàng', N'Nam', '1989-09-05', '0909876543', NULL),
-	(12, N'Lưu Thị Mai Anh', N'Nữ', '2004-04-28', '0976543210', NULL),
-	(13, N'Vũ Văn Tuấn', N'Nam', '1974-02-11', '0997654321', NULL),
-	(14, N'Nguyễn Thị Thanh', N'Nữ', '1999-08-19', '0932123456', NULL),
-	(15, N'Phạm Văn Long', N'Nam', '1991-03-15', '0943210987', NULL),
-	(16, N'Đặng Thị Hòa', N'Nữ', '1997-12-09', '0956781234', NULL),
-	(17, N'Bạch Văn Dũng', N'Nam', '1986-06-21', '0901235678', NULL),
-	(18, N'Lý Thị Hương', N'Nữ', '1994-01-30', '0991234567', NULL),
-	(19, N'Khách vãng lai', N'Nữ', NULL, '0000000001', NULL),
-	(20, N'Phan Chiến Thắng', N'Nam', '2002-12-12', '0912345676', NULL);
+INSERT INTO KHACH_HANG(IDKhachHang, HoTen, GioiTinh, NgaySinh, DienThoai) VALUES
+	('KH000001', N'Nguyễn Văn Minh', N'Nam', '1990-05-12', '0912345678'), 
+	('KH000002', N'Trần Thị Hồng', N'Nữ', '1988-03-22', '0934567890'), 
+	('KH000003', N'Lê Quốc Anh', N'Nam', '1995-11-03', '0978456321'), 
+	('KH000004', N'Phạm Thị Lan', N'Nữ', '1992-07-17', '0987654321'), 
+	('KH000005', N'Hoàng Văn Tâm', N'Nam', '1985-02-10', '0901234987'), 
+	('KH000006', N'Võ Thị Mai', N'Nữ', '1998-09-08', '0965432187'), 
+	('KH000007', N'Khách vãng lai', NULL, NULL, '0000000000'), 
+	('KH000008', N'Bùi Thị Thu', N'Nữ', '2000-12-14', '0998765432'), 
+	('KH000009', N'Ngô Văn Khánh', N'Nam', '1987-06-30', '0954321987'), 
+	('KH000010', N'Phan Thị Hạnh', N'Nữ', '1993-10-19', '0923456789'), 
+	('KH000011', N'Trịnh Văn Hoàng', N'Nam', '1989-09-05', '0909876543'), 
+	('KH000012', N'Lưu Thị Mai Anh', N'Nữ', '2004-04-28', '0976543210'), 
+	('KH000013', N'Vũ Văn Tuấn', N'Nam', '1974-02-11', '0997654321'), 
+	('KH000014', N'Nguyễn Thị Thanh', N'Nữ', '1999-08-19', '0932123456'), 
+	('KH000015', N'Phạm Văn Long', N'Nam', '1991-03-15', '0943210987'), 
+	('KH000016', N'Đặng Thị Hòa', N'Nữ', '1997-12-09', '0956781234'), 
+	('KH000017', N'Bạch Văn Dũng', N'Nam', '1986-06-21', '0901235678'), 
+	('KH000018', N'Lý Thị Hương', N'Nữ', '1994-01-30', '0991234567'), 
+	('KH000019', N'Khách vãng lai', NULL, NULL, '0000000001'), 
+	('KH000020', N'Phan Chiến Thắng', N'Nam', '2002-12-12', '0912345676');
 
-INSERT INTO NHOM_THUOC(IDNhomThuoc, TenNhom, MoTa, GhiChu) VALUES
-	(1, N'Bù nước, điện giải', N'Cân bằng nước, khoáng chất', NULL),
-	(2, N'Chống nôn', N'Giảm buồn nôn, say xe', NULL),
-	(3, N'Corticoid', N'Kháng viêm, dị ứng mạnh', NULL),
-	(4, N'Dự phòng hen', N'Ngừa cơn hen phế quản', NULL),
-	(5, N'Giảm nhu động ruột', N'Cầm tiêu chảy cấp', NULL),
-	(6, N'Giảm đau, hạ sốt', N'Trị đau đầu, cảm sốt', NULL),
-	(7, N'Kháng histamin H1', N'Trị dị ứng, sổ mũi', NULL),
-	(8, N'Kháng sinh', N'Diệt vi khuẩn gây bệnh', NULL),
-	(9, N'Kháng virus', N'Ức chế virus nhân lên', NULL),
-	(10, N'Men tiêu hóa', N'Hỗ trợ tiêu hóa, lợi khuẩn', NULL),
-	(11, N'Nhuận tràng', N'Trị táo bón, dễ đi ngoài', NULL),
-	(12, N'Siro ho thảo dược', N'Giảm ho bằng thảo mộc', NULL),
-	(13, N'Sắt', N'Bổ sung sắt, trị thiếu máu', NULL),
-	(14, N'Thuốc chống co giật', N'Cắt cơn co giật, động kinh', NULL),
-	(15, N'Thuốc ho long đờm', N'Làm loãng và tống đờm', NULL),
-	(16, N'Thuốc đông phân', N'Hỗ trợ đặc thù tiêu hóa', NULL),
-	(17, N'Trung hoà acid', N'Giảm đau dạ dày tức thì', NULL),
-	(18, N'Tẩy giun', N'Diệt giun sán đường ruột', NULL),
-	(19, N'Vi chất', N'Bổ sung khoáng chất yếu', NULL),
-	(20, N'Vitamin', N'Tăng đề kháng, sức khỏe', NULL),
-	(21, N'Ức chế tiết Acid', N'Trị trào ngược, loét dạ dày', NULL),
-	(22, N'Trang thiết bị y tế', N'Dụng cụ, vật tư y tế', NULL);
+INSERT INTO NHOM_THUOC(IDNhomThuoc, TenNhom, MoTa) VALUES
+	('NH0001', N'Bù nước, điện giải', N'Cân bằng nước, khoáng chất'), 
+	('NH0002', N'Chống nôn', N'Giảm buồn nôn, say xe'), 
+	('NH0003', N'Corticoid', N'Kháng viêm, dị ứng mạnh'), 
+	('NH0004', N'Dự phòng hen', N'Ngừa cơn hen phế quản'), 
+	('NH0005', N'Giảm nhu động ruột', N'Cầm tiêu chảy cấp'), 
+	('NH0006', N'Giảm đau, hạ sốt', N'Trị đau đầu, cảm sốt'), 
+	('NH0007', N'Kháng histamin H1', N'Trị dị ứng, sổ mũi'), 
+	('NH0008', N'Kháng sinh', N'Diệt vi khuẩn gây bệnh'), 
+	('NH0009', N'Kháng virus', N'Ức chế virus nhân lên'), 
+	('NH0010', N'Men tiêu hóa', N'Hỗ trợ tiêu hóa, lợi khuẩn'), 
+	('NH0011', N'Nhuận tràng', N'Trị táo bón, dễ đi ngoài'), 
+	('NH0012', N'Siro ho thảo dược', N'Giảm ho bằng thảo mộc'), 
+	('NH0013', N'Sắt', N'Bổ sung sắt, trị thiếu máu'), 
+	('NH0014', N'Thuốc chống co giật', N'Cắt cơn co giật, động kinh'), 
+	('NH0015', N'Thuốc ho long đờm', N'Làm loãng và tống đờm'), 
+	('NH0016', N'Thuốc đông phân', N'Hỗ trợ đặc thù tiêu hóa'), 
+	('NH0017', N'Trung hoà acid', N'Giảm đau dạ dày tức thì'), 
+	('NH0018', N'Tẩy giun', N'Diệt giun sán đường ruột'), 
+	('NH0019', N'Vi chất', N'Bổ sung khoáng chất yếu'), 
+	('NH0020', N'Vitamin', N'Tăng đề kháng, sức khỏe'), 
+	('NH0021', N'Ức chế tiết Acid', N'Trị trào ngược, loét dạ dày'), 
+	('NH0022', N'Trang thiết bị y tế', N'Dụng cụ, vật tư y tế');
 
-INSERT INTO THUOC(IDThuoc, IDNhomThuoc, TenThuoc, TenHoatChat, HamLuong, DangBaoChe, DonViTinh, NuocSanXuat, GhiChu) VALUES
-	(1, 6, N'Efferalgan 500', N'Paracetamol', N'500mg', N'Viên nén', N'Viên', N'Việt Nam', NULL),
-	(2, 8, N'Augmentine 625', N'Amoxicillin, Acid Clavulanic', N'500mg', N'Viên nén', N'Viên', N'Việt Nam', NULL),
-	(3, 21, N'Nexium 20', N'Esomeprazole', N'20mg', N'Viên nén', N'Viên', N'Đức', NULL),
-	(4, 10, N'Enterogermina 2 tỷ', N'Bacillus clausii', N'2 tỷ', N'Khác', N'Viên', N'Việt Nam', NULL),
-	(5, 20, N'Vitamin C 500mg', N'Vitamin C', N'500mg', N'Viên nén', N'Viên', N'Mỹ', NULL),
-	(6, 15, N'Acemuc 100mg', N'Acetylcystein', N'100mg', N'Bột', N'Gói', N'Việt Nam', NULL),
-	(7, 3, N'Medrol 16', N'Methyl prednisolone', N'16mg', N'Viên nén', N'Viên', N'Ấn Độ', NULL),
-	(8, 22, N'Khẩu trang y tế 4 lớp', N'Vải không dệt', N'Không', N'Khẩu trang', N'Hộp (50 cái)', N'Việt Nam', NULL),
-	(9, 7, N'Aerius 60ml', N'Desloratadine', N'0.5mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc', NULL),
-	(10, 16, N'Smecta', N'Diosmectit', N'3mg', N'Bột', N'Gói', N'Nhật Bản', NULL),
-	(11, 1, N'Oresol hương cam 5.6g', N'Oresol', N'5.6g', N'Bột', N'Gói', N'Việt Nam', NULL),
-	(12, 12, N'Prospan 100ml', N'Cao khô lá thường xuân', N'7mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc', NULL),
-	(13, 19, N'Unikid ZinC 70', N'Kẽm Gluconat', N'10mg', N'Bột', N'Gói', N'Việt Nam', NULL),
-	(14, 8, N'Zinnat 50ml', N'Cefuroxime', N'25mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc', NULL),
-	(15, 21, N'Stadnex 40', N'Esomeprazole', N'40mg', N'Viên nén', N'Viên', N'Đức', NULL),
-	(16, 6, N'Hapacol 250', N'Paracetamol', N'250mg', N'Bột', N'Gói', N'Việt Nam', NULL),
-	(17, 20, N'Ceelin 120ml', N'Vitamin C', N'20mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc', NULL),
-	(18, 4, N'Singulair 4mg', N'Montelukast', N'4mg', N'Bột', N'Gói', N'Ấn Độ', NULL),
-	(19, 13, N'Ferlatum 15ml', N'Sắt III', N'40mg/15ml', N'Dung dịch', N'Chai', N'Hàn Quốc', NULL),
-	(20, 17, N'Phosphalugel', N'Aluminium phosphate', N'20g', N'Bột', N'Gói', N'Đức', NULL),
-	(21, 2, N'Motilium 30ml', N'Domperidone', N'1mg/ml', N'Dung dịch', N'Chai', N'Ấn Độ', NULL),
-	(22, 15, N'Halixol 100ml', N'Ambroxol', N'3mg/ml', N'Dung dịch', N'Chai', N'Việt Nam', NULL),
-	(23, 8, N'Zitromax Pos 15ml', N'Azithromycin', N'40mg/ml', N'Dung dịch', N'Chai', N'Nhật Bản', NULL),
-	(24, 20, N'Vitamin B1', N'Thiamin', N'250mg', N'Viên nén', N'Viên', N'Đức', NULL),
-	(25, 22, N'Quickseven', N'Kháng thể kháng hCG', N'25mIU/ml', N'Que thử', N'Cái', N'Việt Nam', NULL),
-	(26, 11, N'Duphalac 15ml', N'Lactulose', N'667g/l', N'Bột', N'Gói', N'Đức', NULL),
-	(27, 9, N'Tamiflu 75mg', N'Oseltamivir', N'75mg', N'Viên nang', N'Viên', N'Việt Nam', NULL),
-	(28, 5, N'Nospa 40', N'Drotaverin', N'40mg', N'Viên nén', N'Viên', N'Đức', NULL),
-	(29, 20, N'Biomicus D3 K2 10ml', N'Vitamin D3', N'100IU/giọt', N'Dung dịch', N'Chai', N'Pháp', NULL),
-	(30, 8, N'Mecefix 50', N'Cefixime', N'50mg', N'Bột', N'Gói', N'Nhật Bản', NULL),
-	(31, 16, N'Hidrasec 30', N'Racecadotril', N'30mg', N'Bột', N'Gói', N'Nhật Bản', NULL),
-	(32, 14, N'Depakine 40ml', N'Natri Valproat', N'200mg/ml', N'Dung dịch', N'Chai', N'Nhật Bản', NULL),
-	(33, 3, N'Medrol 4', N'Methyl prednisolone', N'4mg', N'Viên nén', N'Viên', N'Ấn Độ', NULL),
-	(34, 6, N'Brufen 60ml', N'Ibuprofen', N'20mg/ml', N'Dung dịch', N'Chai', N'Việt Nam', NULL),
-	(35, 22, N'Khẩu trang 3D Mask', N'Vải không dệt', N'Không', N'Khẩu trang', N'Gói (5 cái)', N'Nhật Bản', NULL),
-	(36, 19, N'Snapcef 100ml', N'Kẽm Gluconat', N'1.6mg/ml', N'Dung dịch', N'Chai', N'Việt Nam', NULL),
-	(37, 21, N'Nexium 10', N'Esomeprazole', N'10mg', N'Bột', N'Gói', N'Đức', NULL),
-	(38, 8, N'Augmentine 250', N'Amoxicillin, Acid Clavulanic', N'250mg', N'Bột', N'Gói', N'Việt Nam', NULL),
-	(39, 10, N'Bioflora 100', N'Saccharomyces boulardii', N'100mg', N'Bột', N'Gói', N'Việt Nam', NULL),
-	(40, 13, N'Exopan 50mg/ml 30ml', N'Sắt III', N'50mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc', NULL),
-	(41, 6, N'Efferalgan Sac 150', N'Paracetamol', N'150mg', N'Bột', N'Gói', N'Việt Nam', NULL),
-	(42, 18, N'Fugacar 500mg', N'Mebendazole', N'500mg', N'Viên nén', N'Viên', N'Hàn Quốc', NULL),
-	(43, 7, N'Fexihist 60mg/5ml 60ml', N'Fexofenadine', N'12mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc', NULL),
-	(44, 4, N'Singulair 5mg', N'Montelukast', N'5mg', N'Viên nén', N'Viên', N'Ấn Độ', NULL),
-	(45, 11, N'Sorbitol 5g', N'Sorbitol', N'5g', N'Bột', N'Gói', N'Đức', NULL),
-	(46, 20, N'Vitamin B2 2mg', N'Vitamin B2', N'2mg', N'Viên nén', N'Viên', N'Mỹ', NULL),
-	(47, 8, N'Taromentine 400 100ml', N'Amoxicillin, Acid Clavulanic', N'80mg/ml', N'Dung dịch', N'Chai', N'Việt Nam', NULL),
-	(48, 6, N'Hapacol 80', N'Paracetamol', N'80mg', N'Bột', N'Gói', N'Việt Nam', NULL),
-	(49, 15, N'Acemuc Kids 200mg', N'Acetylcystein', N'200mg', N'Bột', N'Gói', N'Việt Nam', NULL),
-	(50, 16, N'Hidrasec 10', N'Racecadotril', N'10mg', N'Bột', N'Gói', N'Nhật Bản', NULL);
+INSERT INTO THUOC(IDThuoc, IDNhomThuoc, TenThuoc, TenHoatChat, HamLuong, DangBaoChe, DonViTinh, NuocSanXuat) VALUES
+	('TH0001', 'NH0015', N'Acemuc 200mg', N'Acetylcystein', N'100mg', N'Viên nén', N'Vỉ', N'Việt Nam'), 
+	('TH0002', 'NH0015', N'Acemuc Kids 100mg', N'Acetylcystein', N'200mg', N'Bột', N'Gói', N'Việt Nam'), 
+	('TH0003', 'NH0007', N'Aerius 60ml', N'Desloratadine', N'0.5mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc'), 
+	('TH0004', 'NH0008', N'Augmentine 250', N'Amoxicillin, Acid Clavulanic', N'250mg', N'Bột', N'Gói', N'Việt Nam'), 
+	('TH0005', 'NH0008', N'Augmentine 625', N'Amoxicillin, Acid Clavulanic', N'500mg', N'Viên nén', N'Vỉ', N'Việt Nam'), 
+	('TH0006', 'NH0010', N'Bioflora 100', N'Saccharomyces boulardii', N'100mg', N'Bột', N'Gói', N'Việt Nam'), 
+	('TH0007', 'NH0020', N'Biomicus D3 K2 10ml', N'Vitamin D3', N'100IU/giọt', N'Dung dịch', N'Chai', N'Pháp'), 
+	('TH0008', 'NH0006', N'Brufen 60ml', N'Ibuprofen', N'20mg/ml', N'Dung dịch', N'Chai', N'Việt Nam'), 
+	('TH0009', 'NH0020', N'Ceelin 120ml', N'Vitamin C', N'20mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc'), 
+	('TH0010', 'NH0014', N'Depakine 40ml', N'Natri Valproat', N'200mg/ml', N'Dung dịch', N'Chai', N'Nhật Bản'), 
+	('TH0011', 'NH0011', N'Duphalac 15ml', N'Lactulose', N'667g/l', N'Bột', N'Gói', N'Đức'), 
+	('TH0012', 'NH0006', N'Efferalgan 500', N'Paracetamol', N'500mg', N'Viên nén', N'Vỉ', N'Việt Nam'), 
+	('TH0013', 'NH0006', N'Efferalgan Sac 150', N'Paracetamol', N'150mg', N'Bột', N'Gói', N'Việt Nam'), 
+	('TH0014', 'NH0010', N'Enterogermina 2 tỷ', N'Bacillus clausii', N'2 tỷ', N'Dung dịch', N'Vỉ', N'Việt Nam'), 
+	('TH0015', 'NH0013', N'Exopan 50mg/ml 30ml', N'Sắt III', N'50mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc'), 
+	('TH0016', 'NH0013', N'Ferlatum 15ml', N'Sắt III', N'40mg/15ml', N'Dung dịch', N'Chai', N'Hàn Quốc'), 
+	('TH0017', 'NH0007', N'Fexihist 60mg/5ml 60ml', N'Fexofenadine', N'12mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc'), 
+	('TH0018', 'NH0018', N'Fugacar 500mg', N'Mebendazole', N'500mg', N'Viên nén', N'Vỉ', N'Hàn Quốc'), 
+	('TH0019', 'NH0015', N'Halixol 100ml', N'Ambroxol', N'3mg/ml', N'Dung dịch', N'Chai', N'Việt Nam'), 
+	('TH0020', 'NH0006', N'Hapacol 80', N'Paracetamol', N'80mg', N'Bột', N'Gói', N'Việt Nam'), 
+	('TH0021', 'NH0006', N'Hapacol 250', N'Paracetamol', N'250mg', N'Bột', N'Gói', N'Việt Nam'), 
+	('TH0022', 'NH0016', N'Hidrasec 10', N'Racecadotril', N'10mg', N'Bột', N'Gói', N'Nhật Bản'), 
+	('TH0023', 'NH0016', N'Hidrasec 30', N'Racecadotril', N'30mg', N'Bột', N'Gói', N'Nhật Bản'), 
+	('TH0024', 'NH0022', N'Khẩu trang 3D Mask', N'Vải không dệt', N'Không', N'Khẩu trang', N'Gói (5 cái)', N'Nhật Bản'), 
+	('TH0025', 'NH0022', N'Khẩu trang y tế 4 lớp', N'Vải không dệt', N'Không', N'Khẩu trang', N'Hộp (50 cái)', N'Việt Nam'), 
+	('TH0026', 'NH0008', N'Mecefix 50', N'Cefixime', N'50mg', N'Bột', N'Gói', N'Nhật Bản'), 
+	('TH0027', 'NH0003', N'Medrol 4', N'Methyl prednisolone', N'4mg', N'Viên nén', N'Vỉ', N'Ấn Độ'), 
+	('TH0028', 'NH0003', N'Medrol 16', N'Methyl prednisolone', N'16mg', N'Viên nén', N'Vỉ', N'Ấn Độ'), 
+	('TH0029', 'NH0002', N'Motilium 30ml', N'Domperidone', N'1mg/ml', N'Dung dịch', N'Chai', N'Ấn Độ'), 
+	('TH0030', 'NH0021', N'Nexium 10', N'Esomeprazole', N'10mg', N'Bột', N'Gói', N'Đức'), 
+	('TH0031', 'NH0021', N'Nexium 20', N'Esomeprazole', N'20mg', N'Viên nén', N'Vỉ', N'Đức'), 
+	('TH0032', 'NH0005', N'Nospa 40', N'Drotaverin', N'40mg', N'Viên nén', N'Vỉ', N'Đức'), 
+	('TH0033', 'NH0001', N'Oresol hương cam 5.6g', N'Oresol', N'5.6g', N'Bột', N'Gói', N'Việt Nam'), 
+	('TH0034', 'NH0017', N'Phosphalugel', N'Aluminium phosphate', N'20g', N'Bột', N'Gói', N'Đức'), 
+	('TH0035', 'NH0012', N'Prospan 100ml', N'Cao khô lá thường xuân', N'7mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc'), 
+	('TH0036', 'NH0022', N'Quickseven', N'Kháng thể kháng hCG', N'25mIU/ml', N'Que thử', N'Cái', N'Việt Nam'), 
+	('TH0037', 'NH0004', N'Singulair 4mg', N'Montelukast', N'4mg', N'Bột', N'Gói', N'Ấn Độ'), 
+	('TH0038', 'NH0004', N'Singulair 5mg', N'Montelukast', N'5mg', N'Viên nén', N'Vỉ', N'Ấn Độ'), 
+	('TH0039', 'NH0016', N'Smecta', N'Diosmectit', N'3mg', N'Bột', N'Gói', N'Nhật Bản'), 
+	('TH0040', 'NH0019', N'Snapcef 100ml', N'Kẽm Gluconat', N'1.6mg/ml', N'Dung dịch', N'Chai', N'Việt Nam'), 
+	('TH0041', 'NH0011', N'Sorbitol 5g', N'Sorbitol', N'5g', N'Bột', N'Gói', N'Đức'), 
+	('TH0042', 'NH0021', N'Stadnex 40', N'Esomeprazole', N'40mg', N'Viên nén', N'Vỉ', N'Đức'), 
+	('TH0043', 'NH0009', N'Tamiflu 75mg', N'Oseltamivir', N'75mg', N'Viên nang', N'Vỉ', N'Việt Nam'), 
+	('TH0044', 'NH0008', N'Taromentine 400 100ml', N'Amoxicillin, Acid Clavulanic', N'80mg/ml', N'Dung dịch', N'Chai', N'Việt Nam'), 
+	('TH0045', 'NH0019', N'Unikid ZinC 70', N'Kẽm Gluconat', N'10mg', N'Bột', N'Gói', N'Việt Nam'), 
+	('TH0046', 'NH0020', N'Vitamin B1', N'Thiamin', N'250mg', N'Viên nén', N'Vỉ', N'Đức'), 
+	('TH0047', 'NH0020', N'Vitamin B2 2mg', N'Vitamin B2', N'2mg', N'Viên nén', N'Vỉ', N'Mỹ'), 
+	('TH0048', 'NH0020', N'Vitamin C 500mg', N'Vitamin C', N'500mg', N'Viên nén', N'Vỉ', N'Mỹ'), 
+	('TH0049', 'NH0008', N'Zinnat 50ml', N'Cefuroxime', N'25mg/ml', N'Dung dịch', N'Chai', N'Hàn Quốc'), 
+	('TH0050', 'NH0008', N'Zitromax Pos 15ml', N'Azithromycin', N'40mg/ml', N'Dung dịch', N'Chai', N'Nhật Bản');
 
 INSERT INTO LO_HANG(IDLoHang, IDThuoc, SoLoNCC, NgaySanXuat, NgayHetHan, NgayNhap, SoLuongNhap, DonViTinh, DonGiaNhap, DonGiaBan, IDNvNhap, IDNhaCungCap, SoLuongTon, GhiChu) VALUES
-	();
+	('LO000001', 'TH0005', 'DVP26082501', '2024-11-15', '2026-02-15', '2025-03-26', 500, N'Vỉ', 11936, 15516, 'NV0002', 'NCC004', 5, NULL), 
+	('LO000002', 'TH0013', 'AKP26032557', '2025-01-10', '2026-05-10', '2025-03-26', 1000, N'Gói', 2736, 3556, 'NV0002', 'NCC003', 12, NULL),
+	('LO000003', 'TH0006', 'DHG12022501', '2024-10-12', '2026-03-12', '2025-03-26', 1000, N'Gói', 6159, 8006, 'NV0002', 'NCC001', 0, NULL), 
+	('LO000004', 'TH0044', 'DTM25072574', '2024-12-21', '2026-05-20', '2025-03-26', 200, N'Chai', 265000, 344500, 'NV0002', 'NCC005', 8, NULL), 
+	('LO000005', 'TH0050', 'TPC14062572', '2025-02-03', '2026-05-15', '2025-03-26', 200, N'Chai', 115998, 150797, 'NV0002', 'NCC002', 2, NULL), 
+	('LO000006', 'TH0039', 'DVP26082507', '2024-11-25', '2026-02-07', '2025-03-26', 1000, N'Gói', 4081, 5305, 'NV0002', 'NCC004', 15, NULL),
+	('LO000007', 'TH0009', 'AKP26032531', '2025-01-29', '2026-05-02', '2025-03-26', 200, N'Chai', 68200, 88660, 'NV0001', 'NCC003', 4, NULL), 
+	('LO000008', 'TH0017', 'DHG12022512', '2024-10-28', '2026-03-07', '2025-03-26', 200, N'Chai', 179000, 232700, 'NV0001', 'NCC001', 1, NULL), 
+	('LO000009', 'TH0027', 'DTM25072521', '2024-11-21', '2026-05-30', '2025-03-26', 500, N'Vỉ', 1260, 1638, 'NV0001', 'NCC005', 0, NULL), 
+	('LO000010', 'TH0012', 'TPC14062534', '2025-02-07', '2026-01-27', '2025-03-26', 500, N'Vỉ', 2875, 3737, 'NV0001', 'NCC002', 3, NULL), 
+	('LO000011', 'TH0040', 'AKP26032529', '2024-12-05', '2026-05-14', '2025-03-26', 200, N'Chai', 28500, 37050, 'NV0001', 'NCC003', 18, NULL), 
+
+	('LO000012', 'TH0023', 'DHG12022502', '2025-03-14', '2026-07-11', '2025-05-22', 1000, N'Gói', 6742, 8764, 'NV0004', 'NCC001', 45, NULL),
+	('LO000013', 'TH0047', 'DVP26082510', '2025-01-27', '2026-08-05', '2025-05-22', 500, N'Vỉ', 150, 195, 'NV0004', 'NCC004', 80, NULL),
+	('LO000014', 'TH0004', 'DTM25072529', '2025-02-25', '2026-09-23', '2025-05-22', 1000, N'Gói', 11000, 14300, 'NV0004', 'NCC005', 21, NULL),
+	('LO000015', 'TH0030', 'TPC14062504', '2025-02-09', '2026-10-13', '2025-05-22', 1000, N'Gói', 22456, 29192, 'NV0004', 'NCC002', 49, NULL),
+	('LO000016', 'TH0010', 'DHG12022503', '2025-03-04', '2026-11-05', '2025-05-22', 200, N'Chai', 80696, 104904, 'NV0004', 'NCC001', 38, NULL), 
+
+	('LO000017', 'TH0032', 'AKP26032543', '2025-01-28', '2026-12-29', '2025-06-14', 500, N'Vỉ', 852, 1107, 'NV0003', 'NCC003', 15, NULL),
+	('LO000018', 'TH0001', 'DVP26082513', '2025-01-31', '2027-01-23', '2025-06-14', 500, N'Vỉ', 1723, 2239, 'NV0003', 'NCC004', 100, NULL),
+	('LO000019', 'TH0007', 'DHG12022517', '2025-05-03', '2027-02-18', '2025-06-14', 200, N'Chai', 330000, 429000, 'NV0003', 'NCC001', 25, NULL), 
+	('LO000020', 'TH0049', 'DTM25072583', '2025-02-11', '2027-03-04', '2025-06-14', 200, N'Chai', 121167, 157517, 'NV0003', 'NCC005', 0, NULL), 
+	('LO000021', 'TH0041', 'TPC14062516', '2025-01-04', '2027-04-22', '2025-06-14', 1000, N'Gói', 980, 1274, 'NV0003', 'NCC002', 12, NULL),
+
+	('LO000022', 'TH0031', 'DVP26082511', '2025-04-06', '2026-07-13', '2025-08-20', 500, N'Vỉ', 22456, 29192, 'NV0002', 'NCC004', 162, NULL),
+	('LO000023', 'TH0020', 'AKP26032568', '2025-04-10', '2026-08-13', '2025-08-20', 1000, N'Gói', 919, 1194, 'NV0002', 'NCC003', 440, NULL),
+	('LO000024', 'TH0022', 'DHG12022511', '2025-05-13', '2026-09-21', '2025-08-20', 1000, N'Gói', 5382, 6996, 'NV0002', 'NCC001', 260, NULL),
+	('LO000025', 'TH0043', 'DVP26082522', '2025-06-07', '2026-10-27', '2025-08-20', 500, N'Vỉ', 53852, 70007, 'NV0002', 'NCC004', 102, NULL),
+	('LO000026', 'TH0026', 'AKP26032553', '2025-05-22', '2026-11-13', '2025-08-20', 1000, N'Gói', 5000, 6500, 'NV0002', 'NCC004', 550, NULL),
+
+	('LO000027', 'TH0036', 'DTM25072589', '2025-06-11', '2026-12-04', '2025-09-23', 200, N'Cái', 5000, 12000, 'NV0002', 'NCC005', 0, NULL), 
+	('LO000028', 'TH0002', 'TPC14062552', '2025-04-02', '2027-01-01', '2025-09-23', 1000, N'Gói', 2643, 3435, 'NV0002', 'NCC002', 625, NULL),
+	('LO000029', 'TH0048', 'DVP26082529', '2025-07-02', '2027-02-03', '2025-09-23', 500, N'Vỉ', 370, 481, 'NV0002', 'NCC004', 18, NULL),
+	('LO000030', 'TH0035', 'DHG12022508', '2025-05-09', '2027-03-11', '2025-09-23', 200, N'Chai', 67200, 87360, 'NV0002', 'NCC001', 33, NULL),
+	
+	('LO000031', 'TH0028', 'AKP26032535', '2025-08-18', '2027-12-06', '2025-10-18', 500, N'Vỉ', 3929, 5107, 'NV0004', 'NCC003', 390, NULL),
+	('LO000032', 'TH0014', 'DVP26082535', '2025-09-17', '2027-05-17', '2025-10-18', 500, N'Vỉ', 8500, 11050, 'NV0004', 'NCC004', 450, NULL),
+	('LO000033', 'TH0021', 'DTM25072564', '2025-07-31', '2027-06-20', '2025-10-18', 1000, N'Gói', 1912, 2485, 'NV0004', 'NCC005', 710, NULL),
+	('LO000034', 'TH0003', 'TPC14062595', '2025-08-17', '2027-02-28', '2025-10-18', 200, N'Chai', 55600, 72280, 'NV0004', 'NCC002', 115, NULL), 
+	('LO000035', 'TH0046', 'DHG12022524', '2025-09-29', '2028-03-20', '2025-10-18', 500, N'Vỉ', 600, 780, 'NV0004', 'NCC001', 412, NULL),
+	('LO000036', 'TH0042', 'DVP26082531', '2025-08-28', '2028-08-24', '2025-10-18', 500, N'Vỉ', 6500, 8450, 'NV0004', 'NCC004', 475, NULL),
+	('LO000037', 'TH0033', 'AKP26032533', '2025-07-28', '2028-07-16', '2025-10-18', 1000, N'Gói', 1760, 2288, 'NV0004', 'NCC003', 790, NULL),
+	('LO000038', 'TH0038', 'DTM25072570', '2025-08-27', '2028-08-06', '2025-10-18', 500, N'Vỉ', 13502, 17552, 'NV0004', 'NCC005', 325, NULL),
+	('LO000039', 'TH0034', 'TPC14062509', '2025-07-07', '2027-01-04', '2025-10-18', 1000, N'Gói', 4013, 5216, 'NV0004', 'NCC002', 605, NULL),
+
+	('LO000040', 'TH0005', 'DVP26082554', '2025-10-10', '2027-10-10', '2025-12-21', 500, N'Vỉ', 11936, 15516, 'NV0003', 'NCC004', 362, NULL),
+	('LO000041', 'TH0006', 'DHG12022525', '2025-11-12', '2026-11-12', '2025-12-21', 1000, N'Gói', 6159, 8006, 'NV0003', 'NCC001', 660, NULL),
+	('LO000042', 'TH0039', 'DVP26082544', '2025-12-05', '2026-12-05', '2025-12-21', 1000, N'Gói', 4081, 5305, 'NV0003', 'NCC004', 790, NULL),
+	('LO000043', 'TH0017', 'DHG12022516', '2025-09-20', '2028-09-20', '2025-12-21', 200, N'Chai', 179000, 232700, 'NV0003', 'NCC001', 120, NULL), 
+	('LO000044', 'TH0012', 'TPC14062525', '2025-10-25', '2028-10-25', '2025-12-21', 500, N'Vỉ', 2875, 3737, 'NV0003', 'NCC002', 350, NULL),
+	('LO000045', 'TH0049', 'DTM25072538', '2025-11-01', '2028-11-01', '2025-12-21', 200, N'Chai', 121167, 157517, 'NV0003', 'NCC005', 115, NULL), 
+	('LO000046', 'TH0036', 'DTM25072532', '2025-12-15', '2027-12-15', '2025-12-21', 200, N'Cái', 5000, 12000, 'NV0003', 'NCC005', 165, NULL), 
+
+	('LO000047', 'TH0018', 'DHG12022514', '2025-10-08', '2027-04-18', '2026-01-20', 500, N'Vỉ', 22000, 28600, 'NV0001', 'NCC001', 500, NULL),
+	('LO000048', 'TH0019', 'DVP26082547', '2025-11-02', '2027-11-08', '2026-01-20', 200, N'Chai', 65163, 84711, 'NV0001', 'NCC004', 198, NULL), 
+	('LO000049', 'TH0011', 'AKP26032549', '2025-12-12', '2027-12-26', '2026-01-20', 1000, N'Gói', 5600, 7280, 'NV0001', 'NCC003', 975, NULL),
+	('LO000050', 'TH0008', 'DTM25072555', '2025-11-03', '2027-01-08', '2026-01-20', 200, N'Chai', 64734, 84154, 'NV0001', 'NCC005', 185, NULL), 
+	('LO000051', 'TH0016', 'DHG12022520', '2025-10-20', '2027-12-22', '2026-01-20', 1000, N'Gói', 22000, 28600, 'NV0001', 'NCC001', 1000, NULL),
+	('LO000052', 'TH0037', 'DVP26082562', '2025-11-16', '2028-02-13', '2026-01-20', 1000, N'Gói', 13502, 17552, 'NV0001', 'NCC004', 960, NULL),
+	('LO000053', 'TH0015', 'AKP26032560', '2025-12-04', '2028-12-27', '2026-01-20', 200, N'Chai', 160000, 208000, 'NV0001', 'NCC003', 188, NULL),
+	
+	('LO000054', 'TH0024', 'DTM25072542', '2025-11-11', '2027-03-04', '2026-02-17', 200, N'Hộp (5 cái)', 38000, 59500, 'NV0003', 'NCC005', 190, NULL), 
+	('LO000055', 'TH0025', 'TPC14062588', '2025-10-17', '2028-10-10', '2026-02-17', 200, N'Hộp (50 cái)', 30000, 45000, 'NV0003', 'NCC002', 197, NULL), 
+	('LO000056', 'TH0029', 'DHG12022513', '2025-11-21', '2028-01-06', '2026-02-17', 200, N'Chai', 25822, 33568, 'NV0003', 'NCC001', 199, NULL), 
+	('LO000057', 'TH0045', 'TPC14062577', '2025-12-03', '2028-03-21', '2026-02-17', 1000, N'Gói', 2625, 3412, 'NV0003', 'NCC002', 1000, NULL),
+	('LO000058', 'TH0013', 'AKP26032537', '2026-01-10', '2028-01-10', '2026-02-17', 1000, N'Gói', 2736, 3556, 'NV0003', 'NCC003', 975, NULL),
+	('LO000059', 'TH0044', 'DTM25072569', '2026-02-14', '2027-02-14', '2026-02-17', 200, N'Chai', 265000, 344500, 'NV0003', 'NCC005', 200, NULL), 
+	('LO000060', 'TH0050', 'TPC14062538', '2026-01-20', '2027-01-20', '2026-02-17', 200, N'Chai', 115998, 150797, 'NV0003', 'NCC002', 198, NULL), 
+
+	('LO000061', 'TH0048', 'DVP26082529', '2025-07-02', '2027-02-03', '2026-03-12', 5, N'Vỉ', 481, 481, 'NV0001', NULL, 5, N'HD000005 ĐỔI THUỐC'),
+
+	('LO000062', 'TH0034', 'TPC14062509', '2025-07-07', '2027-01-04', '2026-03-18', 10, N'Gói', 5216, 5216, 'NV0004', NULL, 10, N'HD000014 TRẢ THUỐC'),
+
+	('LO000063', 'TH0009', 'AKP26032546', '2026-02-01', '2027-02-01', '2026-03-22', 200, N'Chai', 68200, 88660, 'NV0001', 'NCC003', 192, NULL), 
+	('LO000064', 'TH0040', 'AKP26032552', '2026-01-15', '2027-01-15', '2026-03-22', 200, N'Chai', 28500, 37050, 'NV0001', 'NCC003', 197, NULL), 
+	('LO000065', 'TH0032', 'AKP26032563', '2026-02-28', '2028-02-28', '2026-03-22', 500, N'Vỉ', 852, 1107, 'NV0001', 'NCC003', 500, NULL),
+	('LO000066', 'TH0027', 'DTM25072557', '2026-02-05', '2027-02-05', '2026-03-22', 500, N'Vỉ', 1260, 1638, 'NV0001', 'NCC005', 470, NULL),
+	('LO000067', 'TH0048', 'DVP26082570', '2026-02-10', '2027-02-10', '2026-03-22', 500, N'Vỉ', 370, 481, 'NV0001', 'NCC004', 500, NULL),
+
+	('LO000068', 'TH0031', 'DVP26082511', '2025-04-06', '2026-07-13', '2026-03-25', 2, N'Chai', 29192, 29192, 'NV00002', NULL, 2, N'HD000027 TRẢ THUỐC'),
+
+	('LO000069', 'TH0017', 'DHG12022516', '2025-09-20', '2028-09-20', '2026-03-30', 1, N'Chai', 232700, 232700, 'NV0004', NULL, 1, N'HD000036 ĐỔI THUỐC');
 
 INSERT INTO HOA_DON(IDHoaDon, IDKhachHang, IDNhanVien, NgayLap, TongTien, HinhThucThanhToan, GhiChu) VALUES
-	();
+	('HD000001', 'KH000001', 'NV0005', '2026-03-10 09:15:00', 0, N'Tiền mặt', NULL), 
+	('HD000002', 'KH000002', 'NV0005', '2026-03-10 14:22:00', 0, N'Chuyển khoản', NULL), 
 
-INSERT INTO CHI_TIET_HOA_DON(IDHoaDon, IDThuoc, SoLuong, DonGia, GhiChu) VALUES
-	();
+	('HD000003', 'KH000003', 'NV0002', '2026-03-11 10:05:00', 0, N'Chuyển khoản', NULL), 
+	('HD000004', 'KH000004', 'NV0001', '2026-03-11 16:40:00', 0, N'Tiền mặt', NULL), 
+	('HD000005', 'KH000005', 'NV0001', '2026-03-11 18:30:00', 0, N'Chuyển khoản', NULL),
+
+	('HD000006', 'KH000005', 'NV0001', '2026-03-12 10:45:00', 0, N'Chuyển khoản', N'ĐỔI THUỐC HD00005'),
+
+	('HD000007', 'KH000006', 'NV0003', '2026-03-13 08:50:00', 0, N'Chuyển khoản', NULL), 
+
+	('HD000008', 'KH000008', 'NV0002', '2026-03-14 11:15:00', 0, N'Chuyển khoản', NULL), 
+	('HD000009', 'KH000009', 'NV0004', '2026-03-14 15:05:00', 0, N'Chuyển khoản', NULL), 
+	('HD000010', 'KH000010', 'NV0004', '2026-03-14 17:00:00', 0, N'Chuyển khoản', NULL), 
+	('HD000011', 'KH000001', 'NV0004', '2026-03-14 19:20:00', 0, N'Tiền mặt', NULL), 
+
+	('HD000012', 'KH000011', 'NV0003', '2026-03-16 09:45:00', 0, N'Chuyển khoản', NULL), 
+	('HD000013', 'KH000012', 'NV0001', '2026-03-16 14:10:00', 0, N'Chuyển khoản', NULL), 
+
+	('HD000014', 'KH000013', 'NV0001', '2026-03-17 09:00:00', 0, N'Chuyển khoản', NULL), 
+	('HD000015', 'KH000014', 'NV0001', '2026-03-17 10:10:00', 0, N'Tiền mặt', NULL),
+	('HD000016', 'KH000015', 'NV0002', '2026-03-17 16:55:00', 0, N'Chuyển khoản', NULL), 
+	('HD000017', 'KH000002', 'NV0002', '2026-03-17 20:20:00', 0, N'Chuyển khoản', NULL), 
+
+	('HD000018', 'KH000005', 'NV0003', '2026-03-18 14:45:00', 0, N'Chuyển khoản', NULL), 
+
+	('HD000019', 'KH000010', 'NV0001', '2026-03-20 07:10:00', 0, N'Chuyển khoản', NULL), 
+	('HD000020', 'KH000003', 'NV0001', '2026-03-20 11:00:00', 0, N'CHuyển khoản', NULL), 
+
+	('HD000021', 'KH000001', 'NV0002', '2026-03-21 09:30:00', 0, N'Chuyển khoản', NULL),
+	
+	('HD000022', 'KH000004', 'NV0005', '2026-03-22 10:10:00', 0, N'Tiền mặt', NULL), 
+	('HD000023', 'KH000006', 'NV0005', '2026-03-22 14:00:00', 0, N'Chuyển khoản', NULL), 
+	('HD000024', 'KH000007', 'NV0005', '2026-03-22 17:40:00', 0, N'Tiền mặt', NULL), 
+	('HD000025', 'KH000008', 'NV0005', '2026-03-22 18:30:00', 0, N'Chuyển khoản', NULL), 
+
+	('HD000026', 'KH000009', 'NV0004', '2026-03-24 08:45:00', 0, N'Chuyển khoản', NULL), 
+	('HD000027', 'KH000010', 'NV0002', '2026-03-24 10:20:00', 0, N'Chuyển khoản', NULL), 
+
+	('HD000028', 'KH000011', 'NV0002', '2026-03-25 11:00:00', 0, N'Chuyển khoản', NULL),
+	('HD000029', 'KH000012', 'NV0002', '2026-03-25 19:15:00', 0, N'Chuyển khoản', NULL), 
+
+	('HD000030', 'KH000013', 'NV0001', '2026-03-27 15:35:00', 0, N'Chuyển khoản', NULL), 
+	('HD000031', 'KH000014', 'NV0004', '2026-03-27 17:50:00', 0, N'Chuyển khoản', NULL), 
+
+	('HD000032', 'KH000015', 'NV0002', '2026-03-28 09:00:00', 0, N'Chuyển khoản', NULL), 
+	('HD000033', 'KH000001', 'NV0003', '2026-03-28 14:10:00', 0, N'Tiền mặt', NULL), 
+	('HD000034', 'KH000002', 'NV0002', '2026-03-28 18:25:00', 0, N'Chuyển khoản', NULL), 
+	('HD000035', 'KH000003', 'NV0001', '2026-03-28 20:05:00', 0, N'Chuyển khoản', NULL),
+	
+	('HD000036', 'KH000005', 'NV0002', '2026-03-30 09:40:00', 0, N'Chuyển khoản', NULL), 
+	('HD000037', 'KH000006', 'NV0003', '2026-03-30 11:20:00', 0, N'Chuyển khoản', NULL),
+	('HD000038', 'KH000006', 'NV0004', '2026-03-30 20:20:00', 0, N'Chuyển khoản', N'ĐỔI THUỐC HD000038'),
+
+	('HD000039', 'KH000007', 'NV0004', '2026-03-31 13:30:00', 0, N'Chuyển khoản', NULL), 
+	('HD000040', 'KH000008', 'NV0002', '2026-03-31 16:00:00', 0, N'Tiền mặt', NULL), 
+	('HD000041', 'KH000009', 'NV0001', '2026-03-31 19:10:00', 0, N'Chuyển khoản', NULL), 
+
+	('HD000042', 'KH000010', 'NV0002', '2026-04-01 08:50:00', 0, N'Chuyển khoản', NULL), 
+	('HD000043', 'KH000011', 'NV0003', '2026-04-01 15:15:00', 0, N'Chuyển khoản', NULL),
+	
+	('HD000044', 'KH000012', 'NV0004', '2026-04-02 09:45:00', 0, N'Chuyển khoản', NULL), 
+	('HD000045', 'KH000013', 'NV0002', '2026-04-02 13:25:00', 0, N'Chuyển khoản', NULL), 
+	('HD000046', 'KH000014', 'NV0001', '2026-04-02 17:35:00', 0, N'Chuyển khoản', NULL),
+	
+	('HD000047', 'KH000015', 'NV0002', '2026-04-03 18:55:00', 0, N'Tiền mặt', NULL), 
+
+	('HD000048', 'KH000001', 'NV0003', '2026-04-04 10:10:00', 0, N'Chuyển khoản', NULL), 
+	('HD000049', 'KH000002', 'NV0004', '2026-04-04 14:00:00', 0, N'Chuyển khoản', NULL), 
+	('HD000050', 'KH000003', 'NV0002', '2026-04-04 16:20:00', 0, N'Tiền mặt', NULL);
+
+INSERT INTO CHI_TIET_HOA_DON(IDHoaDon, IDThuoc, IDLoHang, SoLuong, DonGia, GhiChu) VALUES
+	('HD000001', 'TH0005', 'LO000001', 3, 15516, NULL), 
+	('HD000001', 'TH0033', 'LO000037', 5, 2288, NULL), 
+
+	('HD000002', 'TH0013', 'LO000002', 10, 3556, NULL), 
+	('HD000002', 'TH0020', 'LO000023', 6, 1194, NULL), 
+
+	('HD000003', 'TH0039', 'LO000006', 10, 5305, NULL), 
+	('HD000003', 'TH0039', 'LO000042', 5, 5305, NULL),
+	
+	('HD000004', 'TH0044', 'LO000004', 2, 344500, NULL), 
+	('HD000004', 'TH0012', 'LO000010', 4, 3737, NULL), 
+
+	('HD000005', 'TH0035', 'LO000030', 1, 87360, NULL), 
+	('HD000005', 'TH0048', 'LO000029', 10, 481, NULL),
+	
+	('HD000006', 'TH0047', 'LO000013', 5, 195, N'ĐỔI THUỐC HD000005'),
+
+	('HD000007', 'TH0017', 'LO000008', 1, 232700, NULL),
+	('HD000007', 'TH0022', 'LO000024', 3, 6996, NULL),
+	
+	('HD000008', 'TH0030', 'LO000015', 2, 29192, NULL), 
+	('HD000008', 'TH0032', 'LO000017', 8, 1107, NULL),
+	
+	('HD000009', 'TH0049', 'LO000020', 1, 157517, NULL), 
+	('HD000009', 'TH0009', 'LO000007', 2, 88660, NULL),
+	
+	('HD000010', 'TH0026', 'LO000026', 15, 6500, NULL),
+	
+	('HD000011', 'TH0005', 'LO000001', 2, 15516, NULL), 
+	('HD000011', 'TH0005', 'LO000040', 3, 15516, NULL),
+	
+	('HD000012', 'TH0038', 'LO000038', 4, 17552, NULL),
+	
+	('HD000013', 'TH0031', 'LO000022', 2, 29192, NULL), 
+	('HD000013', 'TH0040', 'LO000011', 3, 37050, NULL),
+	
+	('HD000014', 'TH0046', 'LO000035', 6, 780, NULL), 
+
+	('HD000015', 'TH0034', 'LO000039', 20, 5216, NULL),
+	
+	('HD000016', 'TH0010', 'LO000016', 1, 104904, NULL), 
+
+	('HD000017', 'TH0005', 'LO000001', 5, 15516, NULL), 
+	('HD000017', 'TH0013', 'LO000002', 8, 3556, NULL), 
+	('HD000017', 'TH0026', 'LO000026', 20, 6500, NULL), 
+	('HD000017', 'TH0033', 'LO000037', 10, 2288, NULL), 
+	('HD000017', 'TH0048', 'LO000029', 15, 481, NULL), 
+
+	('HD000018', 'TH0039', 'LO000006', 15, 5305, NULL), 
+	('HD000018', 'TH0035', 'LO000030', 2, 87360, NULL), 
+	('HD000018', 'TH0017', 'LO000008', 1, 232700, NULL), 
+	('HD000018', 'TH0032', 'LO000017', 12, 1107, NULL), 
+	('HD000018', 'TH0046', 'LO000035', 20, 780, NULL), 
+	('HD000018', 'TH0009', 'LO000007', 3, 88660, NULL), 
+
+	('HD000019', 'TH0044', 'LO000004', 1, 344500, NULL), 
+	('HD000019', 'TH0044', 'LO000059', 1, 344500, NULL), 
+	('HD000019', 'TH0022', 'LO000024', 5, 6996, NULL), 
+	('HD000019', 'TH0038', 'LO000038', 6, 17552, NULL), 
+	('HD000019', 'TH0012', 'LO000010', 10, 3737, NULL),
+	
+	('HD000020', 'TH0031', 'LO000022', 5, 29192, NULL), 
+	('HD000020', 'TH0040', 'LO000011', 4, 37050, NULL), 
+	('HD000020', 'TH0034', 'LO000039', 15, 5216, NULL), 
+	('HD000020', 'TH0020', 'LO000023', 20, 1194, NULL), 
+
+	('HD000021', 'TH0017', 'LO000008', 2, 232700, NULL), 
+	('HD000021', 'TH0049', 'LO000020', 2, 157517, NULL), 
+	('HD000021', 'TH0035', 'LO000030', 3, 87360, NULL), 
+	('HD000021', 'TH0005', 'LO000040', 10, 15516, NULL), 
+	('HD000021', 'TH0010', 'LO000016', 2, 104904, NULL), 
+	('HD000021', 'TH0030', 'LO000015', 5, 29192, NULL), 
+
+	('HD000022', 'TH0005', 'LO000040', 4, 15516, NULL), 
+	('HD000022', 'TH0026', 'LO000026', 10, 6500, NULL), 
+	('HD000022', 'TH0033', 'LO000037', 6, 2288, NULL), 
+
+	('HD000023', 'TH0017', 'LO000008', 1, 232700, NULL), 
+
+	('HD000024', 'TH0039', 'LO000042', 8, 5305, NULL), 
+	('HD000024', 'TH0046', 'LO000035', 12, 780, NULL), 
+	('HD000024', 'TH0032', 'LO000017', 10, 1107, NULL), 
+	('HD000024', 'TH0020', 'LO000023', 15, 1194, NULL), 
+
+	('HD000025', 'TH0044', 'LO000059', 1, 344500, NULL), 
+	('HD000025', 'TH0012', 'LO000010', 5, 3737, NULL), 
+
+	('HD000026', 'TH0035', 'LO000030', 2, 87360, NULL), 
+	('HD000026', 'TH0049', 'LO000020', 1, 157517, NULL), 
+	('HD000026', 'TH0009', 'LO000007', 2, 88660, NULL), 
+	('HD000026', 'TH0038', 'LO000038', 4, 17552, NULL), 
+	('HD000026', 'TH0048', 'LO000029', 20, 481, NULL), 
+
+	('HD000027', 'TH0026', 'LO000026', 25, 6500, NULL), 
+
+	('HD000028', 'TH0031', 'LO000022', 4, 29192, NULL), 
+	('HD000028', 'TH0040', 'LO000011', 3, 37050, NULL), 
+	('HD000028', 'TH0034', 'LO000039', 10, 5216, NULL), 
+
+	('HD000029', 'TH0030', 'LO000015', 3, 29192, NULL), 
+	('HD000029', 'TH0010', 'LO000016', 1, 104904, NULL), 
+
+	('HD000030', 'TH0013', 'LO000058', 5, 3556, NULL), 
+	('HD000030', 'TH0033', 'LO000037', 7, 2288, NULL), 
+	('HD000030', 'TH0022', 'LO000024', 6, 6996, NULL), 
+	('HD000030', 'TH0046', 'LO000035', 15, 780, NULL), 
+
+	('HD000031', 'TH0017', 'LO000008', 2, 232700, NULL), 
+
+	('HD000032', 'TH0035', 'LO000030', 1, 87360, NULL), 
+	('HD000032', 'TH0038', 'LO000038', 5, 17552, NULL), 
+	('HD000032', 'TH0048', 'LO000029', 30, 481, NULL), 
+
+	('HD000033', 'TH0005', 'LO000040', 6, 15516, NULL), 
+	('HD000033', 'TH0039', 'LO000042', 12, 5305, NULL), 
+	('HD000033', 'TH0026', 'LO000026', 18, 6500, NULL), 
+	('HD000033', 'TH0032', 'LO000017', 20, 1107, NULL), 
+	('HD000033', 'TH0046', 'LO000035', 25, 780, NULL), 
+
+	('HD000034', 'TH0044', 'LO000059', 1, 344500, NULL), 
+	('HD000034', 'TH0049', 'LO000020', 1, 157517, NULL), 
+
+	('HD000035', 'TH0012', 'LO000010', 8, 3737, NULL), 
+	('HD000035', 'TH0020', 'LO000023', 20, 1194, NULL), 
+	('HD000035', 'TH0033', 'LO000037', 10, 2288, NULL), 
+
+	('HD000036', 'TH0031', 'LO000022', 6, 29192, NULL), 
+	('HD000036', 'TH0034', 'LO000039', 12, 5216, NULL), 
+	('HD000036', 'TH0026', 'LO000026', 10, 6500, NULL), 
+	('HD000036', 'TH0048', 'LO000029', 15, 481, NULL), 
+
+	('HD000037', 'TH0017', 'LO000008', 1, 232700, NULL),
+	
+	('HD000038', 'TH0039', 'LO000042', 10, 5305, NULL), 
+	('HD000038', 'TH0005', 'LO000040', 5, 15516, NULL), 
+
+	('HD000039', 'TH0003', 'LO000034', 1, 72280, N'ĐỔI THUỐC HD000038'),
+
+	('HD000040', 'TH0040', 'LO000011', 5, 37050, NULL), 
+	('HD000040', 'TH0032', 'LO000017', 15, 1107, NULL), 
+	('HD000040', 'TH0046', 'LO000035', 20, 780, NULL), 
+	('HD000040', 'TH0022', 'LO000024', 8, 6996, NULL), 
+
+	('HD000041', 'TH0044', 'LO000059', 1, 344500, NULL),
+	
+	('HD000042', 'TH0035', 'LO000030', 2, 87360, NULL), 
+	('HD000042', 'TH0010', 'LO000016', 1, 104904, NULL), 
+	('HD000042', 'TH0030', 'LO000015', 4, 29192, NULL), 
+
+	('HD000043', 'TH0026', 'LO000026', 15, 6500, NULL), 
+	('HD000043', 'TH0033', 'LO000037', 12, 2288, NULL), 
+
+	('HD000044', 'TH0013', 'LO000058', 6, 3556, NULL), 
+	('HD000044', 'TH0038', 'LO000038', 5, 17552, NULL), 
+	('HD000044', 'TH0049', 'LO000020', 1, 157517, NULL), 
+	('HD000044', 'TH0046', 'LO000035', 10, 780, NULL), 
+
+	('HD000045', 'TH0031', 'LO000022', 5, 29192, NULL), 
+
+	('HD000046', 'TH0048', 'LO000029', 25, 481, NULL), 
+	('HD000046', 'TH0020', 'LO000023', 20, 1194, NULL), 
+	('HD000046', 'TH0032', 'LO000017', 10, 1107, NULL), 
+
+	('HD000047', 'TH0034', 'LO000039', 8, 5216, NULL), 
+	('HD000047', 'TH0026', 'LO000026', 12, 6500, NULL), 
+
+	('HD000048', 'TH0005', 'LO000040', 4, 15516, NULL), 
+	('HD000048', 'TH0039', 'LO000042', 6, 5305, NULL), 
+	('HD000048', 'TH0046', 'LO000035', 15, 780, NULL), 
+	('HD000048', 'TH0033', 'LO000037', 10, 2288, NULL), 
+
+	('HD000049', 'TH0017', 'LO000008', 2, 232700, NULL),
+	
+	('HD000050', 'TH0044', 'LO000059', 1, 344500, NULL), 
+	('HD000050', 'TH0035', 'LO000030', 1, 87360, NULL), 
+	('HD000050', 'TH0049', 'LO000020', 1, 157517, NULL);
